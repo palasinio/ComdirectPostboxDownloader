@@ -384,6 +384,8 @@ class Main:
                     self.onlineArchivedIndicesList.append(idx)
                 if firstFilename in downloadFilenameList:
                     self.onlineFileNameMatchingIndicesList.append(idx)
+                # comdirect may mark a document as read when it is downloaded.
+                # alreadyRead is display-only here and never used for local sync decisions.
                 if not document.documentMetadata.alreadyRead:
                     self.onlineUnreadIndicesList.append(idx)
 
@@ -471,6 +473,8 @@ class Main:
                     __printStatus(idx, document, "FEHLER - Download fehlgeschlagen (siehe oben)")
                     countSkipped += 1
                     continue
+                # The API download can change alreadyRead server-side; local sync
+                # is based on file path/existence and document date instead.
                 with open(filepath, "wb") as f:
                     f.write(docContent)
                     # shutil.copyfileobj(docContent, f)

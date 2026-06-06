@@ -84,6 +84,10 @@ Bei `incrementalSync=True` prüft das Tool vor dem Download, ob ein Dokument ber
 
 Menüpunkt 3 zeigt dadurch an, wie viele Online-Dokumente durch die Filter ausgewählt, bereits lokal vorhanden oder noch fehlend sind. Menüpunkt 4 lädt nur fehlende Dokumente herunter.
 
+Der Download über die comdirect API kann serverseitig den Status `alreadyRead` verändern, weil comdirect den Abruf offenbar wie ein Öffnen oder Lesen des Dokuments behandelt. `alreadyRead` ist deshalb kein zuverlässiger Indikator dafür, ob ein Dokument bereits lokal gesichert wurde. Für den lokalen Sync werden weiterhin Dateiexistenz, Zielpfad und Dokumentdatum verwendet.
+
+Eine automatische Archivierung ist nicht implementiert. Solange kein dokumentierter comdirect-Endpunkt dafür bekannt ist, markiert das Tool heruntergeladene Dokumente nicht automatisch als archiviert.
+
 ## Transparenz
 
 Dieses Fork wurde bei den Erweiterungen für Secret-Handling, thematische Unterordner und inkrementellen Sync mit Unterstützung von OpenAI Codex bearbeitet. Die Änderungen wurden dabei gezielt klein gehalten und an der bestehenden Projektstruktur ausgerichtet.

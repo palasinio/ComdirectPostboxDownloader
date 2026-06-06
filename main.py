@@ -116,6 +116,7 @@ class Main:
                 # start download of files
                 self.__startConnection()
                 self.__loadDocuments()
+                self.__resetOnlineStatusLists()
                 self.__processOnlineDocuments()
             elif val == 0:
                 loop = False
@@ -214,13 +215,7 @@ class Main:
             x += batchSize
 
     def __showStatusOnlineDocuments(self):
-        self.onlineAdvertismentIndicesList = []
-        self.onlineArchivedIndicesList = []
-        self.onlineFileNameMatchingIndicesList = []
-        self.onlineSelectedIndicesList = []
-        self.onlineNotYetDownloadedIndicesList = []
-        self.onlineAlreadyDownloadedIndicesList = []
-        self.onlineUnreadIndicesList = []
+        self.__resetOnlineStatusLists()
 
         if not self.onlineDocumentsDict:
             return
@@ -246,11 +241,17 @@ class Main:
             table.add_row("Davon in der Liste gewünschter Dateinamen", str(len(self.onlineFileNameMatchingIndicesList)), style="dim")
         print(table)
 
-    def __get_document_type(self, document: Document, downloadFilenameList: set[str] | None = None) -> str:
-        firstFilename = document.name.split(" ", 1)[0]
-        if downloadFilenameList is None or firstFilename in downloadFilenameList:
-            return firstFilename
-        return firstFilename
+    def __resetOnlineStatusLists(self):
+        self.onlineAdvertismentIndicesList = []
+        self.onlineArchivedIndicesList = []
+        self.onlineFileNameMatchingIndicesList = []
+        self.onlineSelectedIndicesList = []
+        self.onlineNotYetDownloadedIndicesList = []
+        self.onlineAlreadyDownloadedIndicesList = []
+        self.onlineUnreadIndicesList = []
+
+    def __get_document_type(self, document: Document) -> str:
+        return document.name.split(" ", 1)[0]
 
     def __get_document_subfolder(self, document: Document) -> str:
         if document.mimeType == "application/pdf":
@@ -270,7 +271,7 @@ class Main:
     def __build_filepath(self, document: Document, useThematicSubFolders: bool, useSubFolders: bool) -> str:
         path_parts = [self.settings.getOutputDir()]
         if useThematicSubFolders:
-            path_parts.append(sanitize_filename(self.__get_document_type(document, self.settings.getDownloadOnlyFilenames())))
+            path_parts.append(sanitize_filename(self.__get_document_type(document)))
         if useSubFolders:
             subFolder = self.__get_document_subfolder(document)
             if subFolder:
@@ -373,7 +374,7 @@ class Main:
             for idx in self.onlineDocumentsDict:
                 progress.advance(task)
                 document = self.onlineDocumentsDict[idx]
-                firstFilename = self.__get_document_type(document, downloadFilenameList)
+                firstFilename = self.__get_document_type(document)
                 countProcessed += 1
 
                 # counting

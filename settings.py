@@ -142,6 +142,8 @@ class Settings:
         return secret_value
 
     def __repairClientSecretIfItContainsPasswordPrefix(self):
+        # Safety net for a previously observed keyring migration issue where
+        # clientSecret was stored with the banking password as a prefix.
         pwd_value = self.__config["DEFAULT"].get("pwd", "").strip()
         client_secret_value = self.__config["DEFAULT"].get("clientSecret", "").strip()
         if not pwd_value or not client_secret_value:
